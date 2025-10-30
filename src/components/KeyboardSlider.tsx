@@ -20,8 +20,6 @@ export const KeyboardSlider = ({
   const [snappedIndex, setSnappedIndex] = useState<number | null>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
 
-  const SNAP_THRESHOLD = 25;
-
   const handleStartDotMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!isActive) {
@@ -49,11 +47,13 @@ export const KeyboardSlider = ({
     const clampedX = Math.max(0, Math.min(x, rect.width));
     
     const tickWidth = rect.width / (letters.length + 1);
+    const SNAP_THRESHOLD = tickWidth * 0.5; // 0.5 keys in each direction
     const tickPositions = letters.map((_, i) => (i + 1) * tickWidth);
     
     let newPosition = clampedX;
     let newSnappedIndex: number | null = null;
 
+    // Find closest tick mark within snap threshold
     for (let i = 0; i < tickPositions.length; i++) {
       const tickPos = tickPositions[i];
       if (Math.abs(clampedX - tickPos) < SNAP_THRESHOLD) {
