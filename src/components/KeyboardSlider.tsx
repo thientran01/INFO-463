@@ -22,12 +22,13 @@ export const KeyboardSlider = ({
 
   const SNAP_THRESHOLD = 25;
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleStartDotMouseDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!isActive) {
       onActivate();
     }
     setIsDragging(true);
-    updateDotPosition(e.clientX);
+    setDotPosition(0);
   };
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -111,10 +112,9 @@ export const KeyboardSlider = ({
       {/* Slider Container */}
       <div
         ref={sliderRef}
-        className={`relative h-16 cursor-pointer transition-all ${
+        className={`relative h-16 transition-all ${
           isActive ? 'opacity-100' : 'opacity-60 hover:opacity-80'
         }`}
-        onMouseDown={handleMouseDown}
       >
         {/* Slider Line */}
         <div
@@ -172,8 +172,29 @@ export const KeyboardSlider = ({
           );
         })}
 
-        {/* Draggable Dot */}
-        {isActive && (
+        {/* Start Dot (always visible at left) */}
+        <div className="absolute left-0 top-1/2 transform -translate-y-1/2">
+          <div
+            onMouseDown={handleStartDotMouseDown}
+            className={`w-10 h-10 rounded-full cursor-grab active:cursor-grabbing transition-all ${
+              isActive
+                ? 'bg-primary border-4 border-primary-foreground shadow-xl shadow-primary/50 scale-110'
+                : 'bg-secondary border-4 border-border hover:scale-110 hover:bg-primary hover:border-primary-foreground'
+            }`}
+          >
+            <div className="w-full h-full flex items-center justify-center text-xs font-bold text-primary-foreground">
+              {isActive ? '▶' : 'START'}
+            </div>
+          </div>
+          {!isActive && (
+            <div className="absolute top-12 left-1/2 transform -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
+              Click to start
+            </div>
+          )}
+        </div>
+
+        {/* Draggable Dot (only when active and dragging) */}
+        {isActive && isDragging && (
           <div
             className="absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all"
             style={{
