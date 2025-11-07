@@ -2,10 +2,8 @@ import { useState } from 'react';
 import { TextDisplay } from '@/components/TextDisplay';
 import { KeyboardSlider } from '@/components/KeyboardSlider';
 import { ControlButtons } from '@/components/ControlButtons';
-import { MetricsPanel } from '@/components/MetricsPanel';
 
 const Index = () => {
-  const TARGET_TEXT = 'THE QUICK BROWN FOX';
   const KEYBOARD_ROWS = [
     ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
     ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
@@ -15,14 +13,8 @@ const Index = () => {
   const [typedText, setTypedText] = useState('');
   const [activeRow, setActiveRow] = useState<number | null>(null);
   const [isShiftActive, setIsShiftActive] = useState(false);
-  const [startTime, setStartTime] = useState<number | null>(null);
-  const [totalDragDistance, setTotalDragDistance] = useState(0);
 
   const handleLetterSelect = (letter: string) => {
-    if (!startTime) {
-      setStartTime(Date.now());
-    }
-
     setTypedText((prev) => prev + letter);
     
     if (isShiftActive) {
@@ -33,9 +25,6 @@ const Index = () => {
   };
 
   const handleSpace = () => {
-    if (!startTime) {
-      setStartTime(Date.now());
-    }
     setTypedText((prev) => prev + ' ');
   };
 
@@ -51,8 +40,6 @@ const Index = () => {
     setTypedText('');
     setActiveRow(null);
     setIsShiftActive(false);
-    setStartTime(null);
-    setTotalDragDistance(0);
   };
 
   return (
@@ -69,7 +56,7 @@ const Index = () => {
         </div>
 
         {/* Text Display */}
-        <TextDisplay typedText={typedText} targetText={TARGET_TEXT} />
+        <TextDisplay typedText={typedText} />
 
         {/* Keyboard Sliders */}
         <div className="w-full max-w-4xl mx-auto space-y-8 mb-8">
@@ -96,22 +83,14 @@ const Index = () => {
         </div>
 
         {/* Reset Button */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center">
           <button
             onClick={handleReset}
-            className="bg-secondary text-secondary-foreground px-6 py-2 rounded-lg font-semibold hover:bg-secondary/80 transition-all"
+            className="bg-background text-foreground px-6 py-2 rounded font-medium hover:bg-muted transition-colors border border-foreground"
           >
             Reset
           </button>
         </div>
-
-        {/* Metrics Panel */}
-        <MetricsPanel
-          startTime={startTime}
-          typedText={typedText}
-          targetText={TARGET_TEXT}
-          totalDragDistance={totalDragDistance}
-        />
       </div>
     </div>
   );
