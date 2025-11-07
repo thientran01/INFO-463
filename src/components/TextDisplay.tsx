@@ -11,17 +11,17 @@ export const TextDisplay = ({ typedText, targetText }: TextDisplayProps) => {
         <div className="text-sm text-muted-foreground mb-2 uppercase tracking-wider">
           Target Phrase
         </div>
-        <div className="text-2xl font-semibold text-foreground tracking-wide">
+        <div className="text-2xl font-medium text-foreground tracking-wide">
           {targetText.split('').map((char, i) => (
             <span
               key={i}
               className={`inline-block transition-colors ${
                 i < typedText.length
                   ? typedText[i] === char
-                    ? 'text-success'
-                    : 'text-destructive'
+                    ? 'text-foreground font-semibold'
+                    : 'text-muted-foreground'
                   : i === typedText.length
-                  ? 'text-accent'
+                  ? 'text-foreground font-semibold underline'
                   : 'text-muted-foreground'
               }`}
             >
@@ -32,15 +32,15 @@ export const TextDisplay = ({ typedText, targetText }: TextDisplayProps) => {
       </div>
 
       {/* Typed Text Display */}
-      <div className="bg-card rounded-xl p-6 border-2 border-border">
+      <div className="bg-card rounded p-6 border border-border">
         <div className="text-sm text-muted-foreground mb-2 uppercase tracking-wider">
           Your Input
         </div>
         <div className="min-h-[60px] text-3xl font-mono text-foreground tracking-wide break-all">
           {typedText || (
-            <span className="text-muted-foreground italic">Start typing...</span>
+            <span className="text-muted-foreground">Start typing...</span>
           )}
-          <span className="inline-block w-1 h-8 bg-primary ml-1 animate-pulse" />
+          <span className="inline-block w-1 h-8 bg-foreground ml-1 animate-pulse" />
         </div>
       </div>
     </div>

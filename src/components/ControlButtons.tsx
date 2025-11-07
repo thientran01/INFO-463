@@ -17,10 +17,10 @@ export const ControlButtons = ({
       <div className="flex gap-4">
         <button
           onClick={onShift}
-          className={`px-6 py-3 rounded-lg font-semibold transition-all hover:scale-105 shadow-lg ${
+          className={`px-6 py-3 rounded font-medium transition-colors border ${
             isShiftActive
-              ? 'bg-success text-success-foreground shadow-success/50'
-              : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+              ? 'bg-foreground text-background border-foreground'
+              : 'bg-background text-foreground border-foreground hover:bg-muted'
           }`}
         >
           SHIFT {isShiftActive && '✓'}
@@ -28,7 +28,7 @@ export const ControlButtons = ({
 
         <button
           onClick={onDelete}
-          className="bg-destructive text-destructive-foreground px-6 py-3 rounded-lg font-semibold hover:scale-105 transition-all shadow-lg hover:shadow-destructive/50"
+          className="bg-foreground text-background px-6 py-3 rounded font-medium hover:bg-muted-foreground transition-colors border border-foreground"
         >
           DELETE
         </button>
@@ -37,7 +37,7 @@ export const ControlButtons = ({
       {/* Space Bar - Wide */}
       <button
         onClick={onSpace}
-        className="bg-secondary text-secondary-foreground px-32 py-4 rounded-lg font-semibold hover:scale-105 hover:bg-secondary/80 transition-all shadow-lg"
+        className="bg-background text-foreground px-32 py-4 rounded font-medium hover:bg-muted transition-colors border border-foreground"
       >
         SPACE
       </button>

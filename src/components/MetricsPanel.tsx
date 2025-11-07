@@ -46,42 +46,34 @@ export const MetricsPanel = ({
 
   return (
     <div className="w-full max-w-4xl mx-auto mt-8">
-      <div className="bg-card rounded-xl p-6 border-2 border-border">
-        <h3 className="text-xl font-semibold mb-4 text-foreground">Metrics</h3>
+      <div className="bg-card rounded p-6 border border-border">
+        <h3 className="text-lg font-medium mb-4 text-foreground">Metrics</h3>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center">
             <div className="text-sm text-muted-foreground mb-1">Time</div>
-            <div className="text-2xl font-bold text-primary">
+            <div className="text-2xl font-mono text-foreground">
               {formatTime(elapsedTime)}
             </div>
           </div>
 
           <div className="text-center">
             <div className="text-sm text-muted-foreground mb-1">Characters</div>
-            <div className="text-2xl font-bold text-foreground">
+            <div className="text-2xl font-mono text-foreground">
               {typedText.length}/{targetText.length}
             </div>
           </div>
 
           <div className="text-center">
             <div className="text-sm text-muted-foreground mb-1">Avg Time/Char</div>
-            <div className="text-2xl font-bold text-foreground">
+            <div className="text-2xl font-mono text-foreground">
               {formatTime(averageTimePerChar)}
             </div>
           </div>
 
           <div className="text-center">
             <div className="text-sm text-muted-foreground mb-1">Accuracy</div>
-            <div
-              className={`text-2xl font-bold ${
-                calculateAccuracy() === 100
-                  ? 'text-success'
-                  : calculateAccuracy() > 80
-                  ? 'text-accent'
-                  : 'text-destructive'
-              }`}
-            >
+            <div className="text-2xl font-mono text-foreground">
               {calculateAccuracy()}%
             </div>
           </div>
@@ -91,15 +83,15 @@ export const MetricsPanel = ({
           <div className="text-sm text-muted-foreground mb-1">
             Total Drag Distance
           </div>
-          <div className="text-xl font-semibold text-foreground">
+          <div className="text-xl font-mono text-foreground">
             {Math.round(totalDragDistance)}px
           </div>
         </div>
 
         {isComplete && (
-          <div className="mt-6 p-4 bg-success/20 border-2 border-success rounded-lg text-center">
-            <div className="text-2xl font-bold text-success mb-2">
-              🎉 Complete!
+          <div className="mt-6 p-4 bg-muted border border-border rounded text-center">
+            <div className="text-xl font-medium text-foreground mb-2">
+              Complete!
             </div>
             <div className="text-sm text-foreground">
               You typed "{targetText}" in {formatTime(elapsedTime)} with{' '}

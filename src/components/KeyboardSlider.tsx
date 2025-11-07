@@ -103,7 +103,7 @@ export const KeyboardSlider = ({
           className="absolute top-0 transform -translate-x-1/2 transition-all duration-150"
           style={{ left: `${dotPosition}px` }}
         >
-          <div className="bg-accent text-accent-foreground px-4 py-2 rounded-lg font-bold text-xl shadow-lg">
+          <div className="bg-foreground text-background px-4 py-2 rounded font-medium text-xl">
             → {isShiftActive ? letters[snappedIndex].toUpperCase() : letters[snappedIndex].toLowerCase()}
           </div>
         </div>
@@ -118,8 +118,8 @@ export const KeyboardSlider = ({
       >
         {/* Slider Line */}
         <div
-          className={`absolute top-1/2 left-0 right-0 h-1 rounded-full transition-all ${
-            isActive ? 'bg-slider-active shadow-lg shadow-primary/20' : 'bg-slider-inactive'
+          className={`absolute top-1/2 left-0 right-0 h-1 transition-all ${
+            isActive ? 'bg-slider-active' : 'bg-slider-inactive'
           }`}
         />
 
@@ -136,9 +136,9 @@ export const KeyboardSlider = ({
             >
               {/* Tick Mark */}
               <div
-                className={`w-0.5 h-6 rounded-full transition-all ${
+                className={`w-0.5 h-6 transition-all ${
                   isSnapped
-                    ? 'bg-slider-snapped h-8 shadow-lg shadow-primary/50'
+                    ? 'bg-slider-snapped h-8'
                     : isActive
                     ? 'bg-tick'
                     : 'bg-slider-inactive'
@@ -146,21 +146,17 @@ export const KeyboardSlider = ({
               />
               
               {/* Snap Zone Indicator */}
-              {isActive && (
+              {isActive && isSnapped && (
                 <div
-                  className={`absolute top-0 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full border-2 transition-all ${
-                    isSnapped
-                      ? 'border-slider-hover bg-slider-hover/20 scale-110'
-                      : 'border-transparent'
-                  }`}
+                  className="absolute top-0 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full border border-foreground transition-all"
                 />
               )}
 
               {/* Letter */}
               <div
-                className={`absolute top-10 left-1/2 transform -translate-x-1/2 text-lg font-semibold transition-all ${
+                className={`absolute top-10 left-1/2 transform -translate-x-1/2 text-lg transition-all ${
                   isSnapped
-                    ? 'text-accent scale-125 font-bold'
+                    ? 'text-foreground font-semibold'
                     : isActive
                     ? 'text-foreground'
                     : 'text-muted-foreground'
@@ -176,13 +172,15 @@ export const KeyboardSlider = ({
         <div className="absolute left-0 top-1/2 transform -translate-y-1/2">
           <div
             onMouseDown={handleStartDotMouseDown}
-            className={`w-10 h-10 rounded-full cursor-grab active:cursor-grabbing transition-all ${
+            className={`w-10 h-10 rounded-full cursor-grab active:cursor-grabbing transition-all border ${
               isActive
-                ? 'bg-primary border-4 border-primary-foreground shadow-xl shadow-primary/50 scale-110'
-                : 'bg-secondary border-4 border-border hover:scale-110 hover:bg-primary hover:border-primary-foreground'
+                ? 'bg-foreground border-foreground'
+                : 'bg-background border-foreground hover:bg-muted'
             }`}
           >
-            <div className="w-full h-full flex items-center justify-center text-xs font-bold text-primary-foreground">
+            <div className={`w-full h-full flex items-center justify-center text-xs font-medium ${
+              isActive ? 'text-background' : 'text-foreground'
+            }`}>
               {isActive ? '▶' : 'START'}
             </div>
           </div>
@@ -205,9 +203,9 @@ export const KeyboardSlider = ({
             }}
           >
             <div
-              className={`w-6 h-6 rounded-full bg-dot border-4 shadow-lg transition-all ${
+              className={`w-6 h-6 rounded-full bg-dot border-2 transition-all ${
                 snappedIndex !== null
-                  ? 'border-slider-snapped scale-125 shadow-primary/50'
+                  ? 'border-foreground scale-125'
                   : 'border-foreground'
               }`}
             />
@@ -220,7 +218,7 @@ export const KeyboardSlider = ({
         <div className="flex justify-center mt-4">
           <button
             onClick={handleConfirm}
-            className="bg-primary text-primary-foreground px-8 py-3 rounded-lg font-semibold text-lg hover:scale-105 transition-transform shadow-lg hover:shadow-primary/50"
+            className="bg-foreground text-background px-8 py-3 rounded font-medium text-lg hover:bg-muted-foreground transition-colors"
           >
             ENTER
           </button>
