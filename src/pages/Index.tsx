@@ -42,8 +42,13 @@ const Index = () => {
     setIsShiftActive(false);
   };
 
+  const handleSubmit = () => {
+    console.log('Submitted:', typedText);
+    // Add your submit logic here
+  };
+
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <div className="min-h-screen bg-background py-8 px-4 relative">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -72,18 +77,8 @@ const Index = () => {
           ))}
         </div>
 
-        {/* Control Buttons */}
-        <div className="mb-8">
-          <ControlButtons
-            onSpace={handleSpace}
-            onDelete={handleDelete}
-            onShift={handleShift}
-            isShiftActive={isShiftActive}
-          />
-        </div>
-
         {/* Reset Button */}
-        <div className="flex justify-center">
+        <div className="flex justify-center mb-8">
           <button
             onClick={handleReset}
             className="bg-background text-foreground px-6 py-2 rounded font-medium hover:bg-muted transition-colors border border-foreground"
@@ -92,6 +87,15 @@ const Index = () => {
           </button>
         </div>
       </div>
+
+      {/* Control Buttons - Positioned Absolutely */}
+      <ControlButtons
+        onSpace={handleSpace}
+        onDelete={handleDelete}
+        onShift={handleShift}
+        onSubmit={handleSubmit}
+        isShiftActive={isShiftActive}
+      />
     </div>
   );
 };
