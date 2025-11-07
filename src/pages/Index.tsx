@@ -48,7 +48,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4 relative">
+    <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -63,22 +63,34 @@ const Index = () => {
         {/* Text Display */}
         <TextDisplay typedText={typedText} />
 
-        {/* Keyboard Sliders */}
-        <div className="w-full max-w-4xl mx-auto space-y-8 mb-8">
-          {KEYBOARD_ROWS.map((letters, index) => (
-            <KeyboardSlider
-              key={index}
-              letters={letters}
-              isActive={activeRow === index}
-              onActivate={() => setActiveRow(index)}
-              onLetterSelect={handleLetterSelect}
-              isShiftActive={isShiftActive}
-            />
-          ))}
+        {/* Keyboard Area */}
+        <div className="w-full max-w-4xl mx-auto">
+          {/* Keyboard Sliders */}
+          <div className="space-y-8 mb-8">
+            {KEYBOARD_ROWS.map((letters, index) => (
+              <KeyboardSlider
+                key={index}
+                letters={letters}
+                isActive={activeRow === index}
+                onActivate={() => setActiveRow(index)}
+                onLetterSelect={handleLetterSelect}
+                isShiftActive={isShiftActive}
+              />
+            ))}
+          </div>
+
+          {/* Control Buttons */}
+          <ControlButtons
+            onSpace={handleSpace}
+            onDelete={handleDelete}
+            onShift={handleShift}
+            onSubmit={handleSubmit}
+            isShiftActive={isShiftActive}
+          />
         </div>
 
         {/* Reset Button */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mt-8">
           <button
             onClick={handleReset}
             className="bg-background text-foreground px-6 py-2 rounded font-medium hover:bg-muted transition-colors border border-foreground"
@@ -87,15 +99,6 @@ const Index = () => {
           </button>
         </div>
       </div>
-
-      {/* Control Buttons - Positioned Absolutely */}
-      <ControlButtons
-        onSpace={handleSpace}
-        onDelete={handleDelete}
-        onShift={handleShift}
-        onSubmit={handleSubmit}
-        isShiftActive={isShiftActive}
-      />
     </div>
   );
 };
