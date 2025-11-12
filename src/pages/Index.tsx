@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { TextDisplay } from '@/components/TextDisplay';
 import { KeyboardSlider } from '@/components/KeyboardSlider';
+import { ControlButtons } from '@/components/ControlButtons';
 
 const Index = () => {
   const KEYBOARD_ROWS = [
@@ -47,86 +48,49 @@ const Index = () => {
   };
 
   return (
-    <div className="h-screen bg-background flex flex-col py-4 px-4 overflow-hidden">
-      <div className="max-w-6xl mx-auto flex flex-col flex-1 min-h-0">
+    <div className="min-h-screen bg-background py-8 px-4">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-4">
-          <h1 className="text-2xl font-bold text-foreground mb-1">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-foreground mb-2">
             Sliding Text Entry Keyboard
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground">
             Drag the dot along the slider to select letters, then click ENTER to confirm
           </p>
         </div>
 
         {/* Text Display */}
-        <div className="mb-4">
-          <TextDisplay typedText={typedText} />
-        </div>
+        <TextDisplay typedText={typedText} />
 
-        {/* Keyboard Area - Centered and Compact */}
-        <div className="flex-1 flex flex-col justify-center min-h-0">
-          <div className="w-full max-w-5xl mx-auto">
-            {/* Keyboard with side buttons */}
-            <div className="flex gap-4 items-center mb-6">
-              <div className="flex-1 space-y-4">
-                {KEYBOARD_ROWS.map((letters, index) => (
-                  <KeyboardSlider
-                    key={index}
-                    letters={letters}
-                    isActive={activeRow === index}
-                    onActivate={() => setActiveRow(index)}
-                    onLetterSelect={handleLetterSelect}
-                    isShiftActive={isShiftActive}
-                  />
-                ))}
-              </div>
-              
-              {/* Right side buttons */}
-              <div className="flex flex-col gap-4">
-                <button
-                  onClick={handleDelete}
-                  className="bg-foreground text-background px-6 py-3 rounded font-medium hover:bg-muted-foreground transition-colors border border-foreground whitespace-nowrap"
-                >
-                  DELETE
-                </button>
-                <button
-                  onClick={handleSubmit}
-                  className="bg-foreground text-background px-8 py-4 rounded font-medium hover:bg-muted-foreground transition-colors border border-foreground whitespace-nowrap"
-                >
-                  ENTER
-                </button>
-              </div>
-            </div>
-
-            {/* Bottom Row - Shift and Space */}
-            <div className="flex items-center justify-between gap-4">
-              <button
-                onClick={handleShift}
-                className={`px-6 py-3 rounded font-medium transition-colors border ${
-                  isShiftActive
-                    ? 'bg-foreground text-background border-foreground'
-                    : 'bg-background text-foreground border-foreground hover:bg-muted'
-                }`}
-              >
-                SHIFT {isShiftActive && '✓'}
-              </button>
-
-              <button
-                onClick={handleSpace}
-                className="bg-background text-foreground px-32 py-4 rounded font-medium hover:bg-muted transition-colors border border-foreground flex-shrink-0"
-              >
-                SPACE
-              </button>
-
-              {/* Empty div for spacing balance */}
-              <div className="w-[88px]"></div>
-            </div>
+        {/* Keyboard Area */}
+        <div className="w-full max-w-4xl mx-auto">
+          {/* Keyboard Sliders */}
+          <div className="space-y-8 mb-8">
+            {KEYBOARD_ROWS.map((letters, index) => (
+              <KeyboardSlider
+                key={index}
+                letters={letters}
+                isActive={activeRow === index}
+                onActivate={() => setActiveRow(index)}
+                onLetterSelect={handleLetterSelect}
+                isShiftActive={isShiftActive}
+              />
+            ))}
           </div>
+
+          {/* Control Buttons */}
+          <ControlButtons
+            onSpace={handleSpace}
+            onDelete={handleDelete}
+            onShift={handleShift}
+            onSubmit={handleSubmit}
+            isShiftActive={isShiftActive}
+          />
         </div>
 
         {/* Reset Button */}
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center mt-8">
           <button
             onClick={handleReset}
             className="bg-background text-foreground px-6 py-2 rounded font-medium hover:bg-muted transition-colors border border-foreground"
