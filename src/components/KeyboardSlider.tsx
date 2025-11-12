@@ -96,7 +96,7 @@ export const KeyboardSlider = ({
   }, [isActive]);
 
   return (
-    <div className="relative w-full py-8">
+    <div className="relative w-full py-8 select-none">
       {/* Letter Preview */}
       {snappedIndex !== null && isActive && (
         <div
