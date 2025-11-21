@@ -74,9 +74,9 @@ export const KeyboardSlider = ({
       const letter = letters[snappedIndex];
       const dragDistance = Math.abs(dotPosition - dragStartPosition);
       onLetterSelect(isShiftActive ? letter.toUpperCase() : letter.toLowerCase(), dragDistance);
-      setDragStartPosition(dotPosition);
+      setDotPosition(0);
+      setDragStartPosition(0);
       setSnappedIndex(null);
-      setIsDragging(true); // Keep dragging active for next letter
     }
   };
 

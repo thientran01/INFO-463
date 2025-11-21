@@ -33,6 +33,8 @@ const Index = () => {
     if (isShiftActive) {
       setIsShiftActive(false);
     }
+
+    setActiveRow(null);
   };
 
   const handleSpace = () => {
