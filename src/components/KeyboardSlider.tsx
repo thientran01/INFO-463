@@ -4,7 +4,7 @@ interface KeyboardSliderProps {
   letters: string[];
   isActive: boolean;
   onActivate: () => void;
-  onLetterSelect: (letter: string) => void;
+  onLetterSelect: (letter: string, dragDistance?: number) => void;
   isShiftActive: boolean;
 }
 
@@ -18,6 +18,7 @@ export const KeyboardSlider = ({
   const [dotPosition, setDotPosition] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [snappedIndex, setSnappedIndex] = useState<number | null>(null);
+  const [dragStartPosition, setDragStartPosition] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
 
   const handleStartDotMouseDown = (e: React.MouseEvent) => {
@@ -27,6 +28,7 @@ export const KeyboardSlider = ({
     }
     setIsDragging(true);
     setDotPosition(0);
+    setDragStartPosition(0);
   };
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -70,9 +72,11 @@ export const KeyboardSlider = ({
   const handleConfirm = () => {
     if (snappedIndex !== null) {
       const letter = letters[snappedIndex];
-      onLetterSelect(isShiftActive ? letter.toUpperCase() : letter.toLowerCase());
-      setDotPosition(0);
+      const dragDistance = Math.abs(dotPosition - dragStartPosition);
+      onLetterSelect(isShiftActive ? letter.toUpperCase() : letter.toLowerCase(), dragDistance);
+      setDragStartPosition(dotPosition);
       setSnappedIndex(null);
+      setIsDragging(true); // Keep dragging active for next letter
     }
   };
 
@@ -96,14 +100,14 @@ export const KeyboardSlider = ({
   }, [isActive]);
 
   return (
-    <div className="relative w-full py-8 select-none">
+    <div className="relative w-full py-4 select-none">
       {/* Letter Preview */}
       {snappedIndex !== null && isActive && (
         <div
           className="absolute top-0 transform -translate-x-1/2 transition-all duration-150"
           style={{ left: `${dotPosition}px` }}
         >
-          <div className="bg-foreground text-background px-4 py-2 rounded font-medium text-xl">
+          <div className="bg-foreground text-background px-3 py-1 rounded font-medium text-base">
             → {isShiftActive ? letters[snappedIndex].toUpperCase() : letters[snappedIndex].toLowerCase()}
           </div>
         </div>
@@ -112,7 +116,7 @@ export const KeyboardSlider = ({
       {/* Slider Container */}
       <div
         ref={sliderRef}
-        className={`relative h-16 transition-all ${
+        className={`relative h-12 transition-all ${
           isActive ? 'opacity-100' : 'opacity-60 hover:opacity-80'
         }`}
       >
@@ -136,9 +140,9 @@ export const KeyboardSlider = ({
             >
               {/* Tick Mark */}
               <div
-                className={`w-0.5 h-6 transition-all ${
+                className={`w-0.5 h-4 transition-all ${
                   isSnapped
-                    ? 'bg-slider-snapped h-8'
+                    ? 'bg-slider-snapped h-6'
                     : isActive
                     ? 'bg-tick'
                     : 'bg-slider-inactive'
@@ -148,13 +152,13 @@ export const KeyboardSlider = ({
               {/* Snap Zone Indicator */}
               {isActive && isSnapped && (
                 <div
-                  className="absolute top-0 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full border border-foreground transition-all"
+                  className="absolute top-0 left-1/2 transform -translate-x-1/2 w-8 h-8 rounded-full border border-foreground transition-all"
                 />
               )}
 
               {/* Letter */}
               <div
-                className={`absolute top-10 left-1/2 transform -translate-x-1/2 text-lg transition-all ${
+                className={`absolute top-7 left-1/2 transform -translate-x-1/2 text-base transition-all ${
                   isSnapped
                     ? 'text-foreground font-semibold'
                     : isActive
@@ -172,20 +176,20 @@ export const KeyboardSlider = ({
         <div className="absolute left-0 top-1/2 transform -translate-y-1/2">
           <div
             onMouseDown={handleStartDotMouseDown}
-            className={`w-10 h-10 rounded-full cursor-grab active:cursor-grabbing transition-all border ${
+            className={`w-8 h-8 rounded-full cursor-grab active:cursor-grabbing transition-all border ${
               isActive
                 ? 'bg-foreground border-foreground'
                 : 'bg-background border-foreground hover:bg-muted'
             }`}
           >
-            <div className={`w-full h-full flex items-center justify-center text-xs font-medium ${
+            <div className={`w-full h-full flex items-center justify-center text-[10px] font-medium ${
               isActive ? 'text-background' : 'text-foreground'
             }`}>
               {isActive ? '▶' : 'START'}
             </div>
           </div>
           {!isActive && (
-            <div className="absolute top-12 left-1/2 transform -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
+            <div className="absolute top-9 left-1/2 transform -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
               Click to start
             </div>
           )}
@@ -203,7 +207,7 @@ export const KeyboardSlider = ({
             }}
           >
             <div
-              className={`w-6 h-6 rounded-full bg-dot border-2 transition-all ${
+              className={`w-5 h-5 rounded-full bg-dot border-2 transition-all ${
                 snappedIndex !== null
                   ? 'border-foreground scale-125'
                   : 'border-foreground'
@@ -215,10 +219,10 @@ export const KeyboardSlider = ({
 
       {/* Confirm Button (appears when letter is selected) */}
       {snappedIndex !== null && isActive && (
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center mt-2">
           <button
             onClick={handleConfirm}
-            className="bg-foreground text-background px-8 py-3 rounded font-medium text-lg hover:bg-muted-foreground transition-colors"
+            className="bg-foreground text-background px-6 py-2 rounded font-medium text-sm hover:bg-muted-foreground transition-colors"
           >
             ENTER
           </button>
