@@ -27,8 +27,14 @@ export const KeyboardSlider = ({
       onActivate();
     }
     setIsDragging(true);
-    setDotPosition(0);
-    setDragStartPosition(0);
+    if (dotPosition === 0) {
+      setDragStartPosition(0);
+    }
+  };
+
+  const handleDotMouseDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsDragging(true);
   };
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -39,6 +45,7 @@ export const KeyboardSlider = ({
 
   const handleMouseUp = () => {
     setIsDragging(false);
+    // Keep dot position and don't reset
   };
 
   const updateDotPosition = (clientX: number) => {
@@ -172,36 +179,39 @@ export const KeyboardSlider = ({
           );
         })}
 
-        {/* Start Dot (always visible at left) */}
-        <div className="absolute left-0 top-1/2 transform -translate-y-1/2">
-          <div
-            onMouseDown={handleStartDotMouseDown}
-            className={`w-8 h-8 rounded-full cursor-grab active:cursor-grabbing transition-all border ${
-              isActive
-                ? 'bg-foreground border-foreground'
-                : 'bg-background border-foreground hover:bg-muted'
-            }`}
-          >
-            <div className={`w-full h-full flex items-center justify-center text-[10px] font-medium ${
-              isActive ? 'text-background' : 'text-foreground'
-            }`}>
-              {isActive ? '▶' : 'START'}
+        {/* Start Dot (visible at left when not active or when dot is at start) */}
+        {(!isActive || dotPosition === 0) && (
+          <div className="absolute left-0 top-1/2 transform -translate-y-1/2">
+            <div
+              onMouseDown={handleStartDotMouseDown}
+              className={`w-8 h-8 rounded-full cursor-grab active:cursor-grabbing transition-all border ${
+                isActive
+                  ? 'bg-foreground border-foreground'
+                  : 'bg-background border-foreground hover:bg-muted'
+              }`}
+            >
+              <div className={`w-full h-full flex items-center justify-center text-[10px] font-medium ${
+                isActive ? 'text-background' : 'text-foreground'
+              }`}>
+                {isActive ? '▶' : 'START'}
+              </div>
             </div>
+            {!isActive && (
+              <div className="absolute top-9 left-1/2 transform -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
+                Click to start
+              </div>
+            )}
           </div>
-          {!isActive && (
-            <div className="absolute top-9 left-1/2 transform -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
-              Click to start
-            </div>
-          )}
-        </div>
+        )}
 
-        {/* Draggable Dot (only when active and dragging) */}
-        {isActive && isDragging && (
+        {/* Draggable Dot (visible when active and dot has moved) */}
+        {isActive && dotPosition > 0 && (
           <div
-            className="absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all"
+            onMouseDown={handleDotMouseDown}
+            className="absolute top-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing transition-all"
             style={{
               left: `${dotPosition}px`,
-              transitionProperty: snappedIndex !== null ? 'all' : 'none',
+              transitionProperty: snappedIndex !== null && !isDragging ? 'all' : 'none',
               transitionDuration: '0.15s',
               transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
             }}
