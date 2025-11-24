@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TextDisplay } from '@/components/TextDisplay';
 import { KeyboardSlider } from '@/components/KeyboardSlider';
 import { ControlButtons } from '@/components/ControlButtons';
 import { MetricsPanel } from '@/components/MetricsPanel';
+import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
   const KEYBOARD_ROWS = [
@@ -17,7 +21,23 @@ const Index = () => {
   const [isShiftActive, setIsShiftActive] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [totalDragDistance, setTotalDragDistance] = useState(0);
-  const [lastDragPosition, setLastDragPosition] = useState(0);
+  const [trialCount, setTrialCount] = useState(0);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchTrialCount();
+  }, []);
+
+  const fetchTrialCount = async () => {
+    const { count, error } = await supabase
+      .from('trials')
+      .select('*', { count: 'exact', head: true });
+
+    if (!error && count !== null) {
+      setTrialCount(count);
+    }
+  };
 
   const handleLetterSelect = (letter: string, dragDistance?: number) => {
     if (startTime === null) {
@@ -52,31 +72,130 @@ const Index = () => {
     setIsShiftActive((prev) => !prev);
   };
 
-  const handleReset = () => {
+  const handleClear = () => {
     setTypedText('');
     setActiveRow(null);
     setIsShiftActive(false);
     setStartTime(null);
     setTotalDragDistance(0);
-    setLastDragPosition(0);
   };
 
-  const handleSubmit = () => {
-    console.log('Submitted:', typedText);
-    // Add your submit logic here
+  const handleResetTrials = async () => {
+    const { error } = await supabase
+      .from('trials')
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000');
+
+    if (error) {
+      toast({
+        title: "Error resetting trials",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      setTrialCount(0);
+      toast({
+        title: "Trials reset",
+        description: "All trial data has been cleared",
+      });
+    }
+  };
+
+  const calculateMetrics = (text: string, elapsed: number) => {
+    const minutes = elapsed / 60000;
+    const words = text.trim().split(/\s+/).length;
+    const wpm = Math.round(words / minutes);
+
+    let correct = 0;
+    for (let i = 0; i < Math.min(text.length, TARGET_TEXT.length); i++) {
+      if (text[i] === TARGET_TEXT[i]) correct++;
+    }
+    const accuracy = Math.round((correct / text.length) * 100);
+
+    const avgTimePerChar = text.length > 0 ? elapsed / text.length : 0;
+
+    return { wpm, accuracy, avgTimePerChar };
+  };
+
+  const handleSubmit = async () => {
+    if (!startTime || typedText.length === 0) {
+      toast({
+        title: "Cannot submit",
+        description: "Please type some text before submitting",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const elapsedTime = Date.now() - startTime;
+    const metrics = calculateMetrics(typedText, elapsedTime);
+
+    const { error } = await supabase.from('trials').insert({
+      typed_text: typedText,
+      target_text: TARGET_TEXT,
+      elapsed_time: elapsedTime,
+      wpm: metrics.wpm,
+      accuracy: metrics.accuracy,
+      total_drag_distance: totalDragDistance,
+      character_count: typedText.length,
+      avg_time_per_char: metrics.avgTimePerChar,
+    });
+
+    if (error) {
+      toast({
+        title: "Error saving trial",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      setTrialCount(prev => prev + 1);
+      toast({
+        title: "Trial saved",
+        description: `Trial ${trialCount + 1}/20 saved successfully`,
+      });
+      handleClear();
+    }
   };
 
   return (
     <div className="min-h-screen bg-background py-4 px-4">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
+        {/* Header with Saved Trials CTA */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex-1"></div>
+          <div className="text-center flex-1">
+            <h1 className="text-2xl font-bold text-foreground mb-1">
+              Sliding Text Entry Keyboard
+            </h1>
+          </div>
+          <div className="flex-1 flex justify-end">
+            <Button
+              variant="outline"
+              onClick={() => navigate('/saved-trials')}
+            >
+              SAVED TRIALS
+            </Button>
+          </div>
+        </div>
+
+        {/* Instructions and Trial Counter */}
         <div className="text-center mb-4">
-          <h1 className="text-2xl font-bold text-foreground mb-1">
-            Sliding Text Entry Keyboard
-          </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground mb-2">
             Drag the dot along the slider to select letters, then click ENTER to confirm
           </p>
+          <p className="text-lg font-semibold text-foreground">
+            {trialCount}/20 trials
+          </p>
+        </div>
+
+        {/* Reset Trials Button */}
+        <div className="w-full max-w-4xl mx-auto flex justify-end mb-4">
+          <Button
+            variant="destructive"
+            onClick={handleResetTrials}
+          >
+            RESET TRIALS
+          </Button>
         </div>
 
         {/* Text Display */}
@@ -88,6 +207,7 @@ const Index = () => {
           typedText={typedText}
           targetText={TARGET_TEXT}
           totalDragDistance={totalDragDistance}
+          trialCount={trialCount}
         />
 
         {/* Keyboard Area */}
@@ -116,14 +236,14 @@ const Index = () => {
           />
         </div>
 
-        {/* Reset Button */}
+        {/* Clear Button */}
         <div className="flex justify-center mt-4">
-          <button
-            onClick={handleReset}
-            className="bg-background text-foreground px-4 py-1.5 rounded font-medium text-sm hover:bg-muted transition-colors border border-foreground"
+          <Button
+            variant="outline"
+            onClick={handleClear}
           >
-            Reset
-          </button>
+            CLEAR
+          </Button>
         </div>
       </div>
     </div>

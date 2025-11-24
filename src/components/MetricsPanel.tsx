@@ -7,11 +7,20 @@ interface MetricsPanelProps {
   totalDragDistance: number;
 }
 
+interface MetricsPanelProps {
+  startTime: number | null;
+  typedText: string;
+  targetText: string;
+  totalDragDistance: number;
+  trialCount: number;
+}
+
 export const MetricsPanel = ({
   startTime,
   typedText,
   targetText,
   totalDragDistance,
+  trialCount,
 }: MetricsPanelProps) => {
   const [elapsedTime, setElapsedTime] = useState(0);
 
@@ -55,11 +64,13 @@ export const MetricsPanel = ({
     typedText.length > 0 ? elapsedTime / typedText.length : 0;
 
   const isComplete = typedText === targetText;
+  const showMetrics = trialCount >= 20;
 
   return (
     <div className="w-full max-w-4xl mx-auto mb-4">
-      <div className="bg-card rounded p-4 border border-border">
-        <h3 className="text-sm font-medium mb-3 text-foreground">Metrics</h3>
+      {showMetrics && (
+        <div className="bg-card rounded p-4 border border-border">
+          <h3 className="text-sm font-medium mb-3 text-foreground">Metrics</h3>
         
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <div className="text-center">
@@ -105,18 +116,19 @@ export const MetricsPanel = ({
           </div>
         </div>
 
-        {isComplete && (
-          <div className="mt-4 p-3 bg-muted border border-border rounded text-center">
-            <div className="text-lg font-medium text-foreground mb-1">
-              Complete!
+          {isComplete && (
+            <div className="mt-4 p-3 bg-muted border border-border rounded text-center">
+              <div className="text-lg font-medium text-foreground mb-1">
+                Complete!
+              </div>
+              <div className="text-xs text-foreground">
+                You typed "{targetText}" in {formatTime(elapsedTime)} with{' '}
+                {calculateAccuracy()}% accuracy
+              </div>
             </div>
-            <div className="text-xs text-foreground">
-              You typed "{targetText}" in {formatTime(elapsedTime)} with{' '}
-              {calculateAccuracy()}% accuracy
-            </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

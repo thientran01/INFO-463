@@ -14,7 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      trials: {
+        Row: {
+          accuracy: number
+          avg_time_per_char: number
+          character_count: number
+          created_at: string
+          elapsed_time: number
+          id: string
+          target_text: string
+          total_drag_distance: number
+          typed_text: string
+          wpm: number
+        }
+        Insert: {
+          accuracy: number
+          avg_time_per_char: number
+          character_count: number
+          created_at?: string
+          elapsed_time: number
+          id?: string
+          target_text: string
+          total_drag_distance: number
+          typed_text: string
+          wpm: number
+        }
+        Update: {
+          accuracy?: number
+          avg_time_per_char?: number
+          character_count?: number
+          created_at?: string
+          elapsed_time?: number
+          id?: string
+          target_text?: string
+          total_drag_distance?: number
+          typed_text?: string
+          wpm?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
