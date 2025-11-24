@@ -115,7 +115,7 @@ export const KeyboardSlider = ({
           style={{ left: `${dotPosition}px` }}
         >
           <div className="bg-foreground text-background px-3 py-1 rounded font-medium text-base">
-            → {isShiftActive ? letters[snappedIndex].toUpperCase() : letters[snappedIndex].toLowerCase()}
+            {isShiftActive ? letters[snappedIndex].toUpperCase() : letters[snappedIndex].toLowerCase()}
           </div>
         </div>
       )}
