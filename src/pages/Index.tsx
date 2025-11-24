@@ -104,13 +104,13 @@ const Index = () => {
   const calculateMetrics = (text: string, elapsed: number) => {
     const minutes = elapsed / 60000;
     const words = text.trim().split(/\s+/).length;
-    const wpm = Math.round(words / minutes);
+    const wpm = minutes > 0 ? Math.round(words / minutes) : 0;
 
     let correct = 0;
     for (let i = 0; i < Math.min(text.length, TARGET_TEXT.length); i++) {
       if (text[i] === TARGET_TEXT[i]) correct++;
     }
-    const accuracy = Math.round((correct / text.length) * 100);
+    const accuracy = text.length > 0 ? Math.round((correct / text.length) * 100) : 0;
 
     const avgTimePerChar = text.length > 0 ? elapsed / text.length : 0;
 
@@ -183,19 +183,18 @@ const Index = () => {
           <p className="text-sm text-muted-foreground mb-2">
             Drag the dot along the slider to select letters, then click ENTER to confirm
           </p>
-          <p className="text-lg font-semibold text-foreground">
-            {trialCount}/20 trials
-          </p>
-        </div>
-
-        {/* Reset Trials Button */}
-        <div className="w-full max-w-4xl mx-auto flex justify-end mb-4">
-          <Button
-            variant="destructive"
-            onClick={handleResetTrials}
-          >
-            RESET TRIALS
-          </Button>
+          <div className="flex items-center justify-center gap-4">
+            <p className="text-lg font-semibold text-foreground">
+              {trialCount}/20 trials
+            </p>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleResetTrials}
+            >
+              RESET TRIALS
+            </Button>
+          </div>
         </div>
 
         {/* Text Display */}
